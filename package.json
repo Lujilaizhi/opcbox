@@ -1,10 +1,10 @@
-{
+﻿{
   "name": "ai-booth-app",
   "version": "1.0.0",
   "description": "AI超能力鉴定 × OPC工作台 — WaytoAGI 市集互动站",
   "type": "module",
   "scripts": {
-    "dev": "vercel dev",
+    "dev": "node dev-server.cjs",
     "deploy": "vercel --prod"
   },
   "dependencies": {},
