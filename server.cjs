@@ -14,8 +14,8 @@ if (fs.existsSync(envPath)) {
   });
 }
 
-const ROOT = path.join(__dirname, 'public');
-const PORT = 3456;
+const ROOT = path.join(process.cwd(), 'public');
+const PORT = process.env.PORT || 3456;
 const API_KEY = process.env.MINIMAX_API_KEY || '';
 
 console.log('[MiniMax API Key]:', API_KEY ? API_KEY.substring(0, 12) + '...' + API_KEY.substring(API_KEY.length - 6) : 'NOT SET');
@@ -134,7 +134,7 @@ const server = http.createServer(async (req, res) => {
   let filePath = req.url.split('?')[0];
   if (filePath === '/' || filePath === '') filePath = '/index.html';
 
-  let fullPath = path.join(__dirname, filePath);
+  let fullPath = path.join(process.cwd(), filePath);
   if (!fs.existsSync(fullPath)) {
     fullPath = path.join(ROOT, filePath);
   }
