@@ -1,9 +1,9 @@
-ï»¿const http = require('http');
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-// åŠ è½½ .envï¼ˆå…¼å®¹ BOMï¼‰
+// ¼ÓÔØ .env£¨¼æÈİ BOM£©
 const envPath = path.join(__dirname, '.env');
 if (fs.existsSync(envPath)) {
   let raw = fs.readFileSync(envPath, 'utf8');
@@ -14,7 +14,7 @@ if (fs.existsSync(envPath)) {
   });
 }
 
-const ROOT = path.join(__dirname, 'public');
+const ROOT = fs.existsSync(path.join(__dirname, 'public')) ? path.join(__dirname, 'public') : __dirname;
 const PORT = process.env.PORT || 3456;
 const API_KEY = process.env.MINIMAX_API_KEY || '';
 
@@ -34,24 +34,24 @@ function callMiniMax(scenario, fields) {
   return new Promise((resolve, reject) => {
     if (!API_KEY) return reject(new Error('MINIMAX_API_KEY not set'));
 
-    // ä» prompts/{scenario}.md åŠ è½½æ¨¡æ¿ï¼Œæ›¿æ¢ {{key}} å ä½ç¬¦
+    // ´Ó prompts/{scenario}.md ¼ÓÔØÄ£°å£¬Ìæ»» {{key}} Õ¼Î»·û
     const tplPath = path.join(__dirname, 'prompts', scenario + '.md');
     if (!fs.existsSync(tplPath)) return reject(new Error('Unknown scenario: ' + scenario));
     let tpl = fs.readFileSync(tplPath, 'utf8');
-    // å»æ‰ BOM
+    // È¥µô BOM
     if (tpl.charCodeAt(0) === 0xFEFF) tpl = tpl.substring(1);
 
-    // æ›¿æ¢ {{key}} å ä½ç¬¦
+    // Ìæ»» {{key}} Õ¼Î»·û
     const prompt = tpl.replace(/\{\{(\w+)\}\}/g, (m, key) => {
       const v = fields && fields[key];
-      return (v && String(v).trim()) ? String(v).trim() : 'ï¼ˆæœªæä¾›ï¼‰';
+      return (v && String(v).trim()) ? String(v).trim() : '£¨Î´Ìá¹©£©';
     });
 
 
     const body = JSON.stringify({
       model: 'abab6.5s-chat',
       messages: [
-        { role: 'system', content: 'ä½ æ˜¯ä¸€ä¸ªä¸“ä¸šã€é«˜æ•ˆçš„ä¸­æ–‡AIåŠ©æ‰‹ã€‚ç›´æ¥è¾“å‡ºç”¨æˆ·è¦æ±‚çš„å†…å®¹ï¼Œä¸è¦å¯’æš„ï¼Œä¸è¦é¢å¤–è§£é‡Šã€‚' },
+        { role: 'system', content: 'ÄãÊÇÒ»¸ö×¨Òµ¡¢¸ßĞ§µÄÖĞÎÄAIÖúÊÖ¡£Ö±½ÓÊä³öÓÃ»§ÒªÇóµÄÄÚÈİ£¬²»Òªº®êÑ£¬²»Òª¶îÍâ½âÊÍ¡£' },
         { role: 'user', content: prompt }
       ],
       temperature: 0.8,
